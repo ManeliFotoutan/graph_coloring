@@ -27,11 +27,24 @@ for _ in range(num_edges):
     if node1 != node2:
         G.add_edge(node1, node2)
 
-# Optionally set node colors and edge attributes if needed
-# Here we set default values for the sake of completeness
-node_colors = {node: 'blue' for node in G.nodes()}  # Default color
-nx.set_node_attributes(G, node_colors, 'color')
+# Define color constraints
+k = int(input("Enter the number of colors: "))
+color_limits = [int(input(f"Enter the maximum number of nodes for color {i+1}: ")) for i in range(k)]
 
+# Map colors to a palette
+color_map = matplotlib.colormaps.get_cmap('tab10')  # Get the colormap
+colors = [color_map(i / (k - 1)) for i in range(k)]  # Generate a list of k colors
+
+# Assign colors to nodes based on constraints
+node_colors = {}
+node_count = 0
+for i, node in enumerate(G.nodes()):
+    color_index = min(node_count // color_limits[i % k], k - 1)
+    node_colors[node] = colors[color_index]
+    node_count += 1
+
+# Set node colors and edge attributes
+nx.set_node_attributes(G, node_colors, 'color')
 edge_thickness = {edge: 2 for edge in G.edges()}  # Default thickness
 nx.set_edge_attributes(G, edge_thickness, 'thickness')
 
@@ -39,12 +52,12 @@ nx.set_edge_attributes(G, edge_thickness, 'thickness')
 pos = nx.spring_layout(G)  # Positions for all nodes
 
 # Draw nodes
-node_colors = nx.get_node_attributes(G, 'color')
-colors = [node_colors[node] for node in G.nodes()]
-nx.draw_networkx_nodes(G, pos, node_size=700, node_color=colors)
+node_color_list = [G.nodes[node]['color'] for node in G.nodes()]
+nx.draw_networkx_nodes(G, pos, node_size=700, node_color=node_color_list)
 
 # Draw edges
-nx.draw_networkx_edges(G, pos, width=2)
+edge_thickness_list = [G.edges[edge]['thickness'] for edge in G.edges()]
+nx.draw_networkx_edges(G, pos, width=edge_thickness_list)
 
 # Draw labels
 labels = nx.get_node_attributes(G, 'label')
@@ -54,5 +67,3 @@ nx.draw_networkx_labels(G, pos, labels, font_size=16)
 plt.title("Graph with User Input")
 plt.savefig('graph_plot.png')  # Save as PNG file
 plt.close()  # Close the plot to free up resources
-
-#testtttt ubuntuuuu

@@ -78,7 +78,12 @@ color_limits = get_color_limits(k)
 
 # Map colors to a palette
 color_map = matplotlib.colormaps.get_cmap('tab10')  # Get the colormap
-colors = [color_map(i / (k - 1)) for i in range(k)]  # Generate a list of k colors
+
+# Handle the color generation without division by zero
+if k > 1:
+    colors = [color_map(i / (k - 1)) for i in range(k)]  # Generate a list of k colors
+else:
+    colors = [color_map(0)]  # Only one color
 
 # Assign colors to nodes based on constraints
 node_colors = {}

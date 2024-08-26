@@ -5,31 +5,19 @@ import matplotlib
 # Set the backend to 'Agg' for non-interactive environments
 matplotlib.use('Agg')
 
-
 def get_integer(prompt):
+    """Get an integer input from the user."""
     while True:
         try:
             return int(input(prompt))
         except ValueError:
             print("Invalid input. Please enter an integer.")
 
-def get_node_input(existing_nodes):
-    while True:
-        try:
-            node_input = input("Enter node (format 'node_id,label'): ")
-            node_id_str, label = node_input.split(',')
-            node_id = int(node_id_str)
-            if node_id in existing_nodes:
-                print(f"Node ID {node_id} already exists. Please enter a unique node ID.")
-                continue
-            return node_id, label
-        except ValueError:
-            print("Invalid format. Please enter node in the format 'node_id,label'.")
-
 def get_edge_input(nodes):
+    """Get an edge input in the format 'node1,node2' from the user."""
     while True:
         try:
-            edge_input = input("Enter edge (format 'node1,node2'): ")
+            edge_input = input("Enter edge (format 'node1_id,node2_id'): ")
             node1_str, node2_str = edge_input.split(',')
             node1, node2 = int(node1_str), int(node2_str)
             if node1 not in nodes or node2 not in nodes:
@@ -37,9 +25,10 @@ def get_edge_input(nodes):
                 continue
             return node1, node2
         except ValueError:
-            print("Invalid format. Please enter edge in the format 'node1,node2'.")
+            print("Invalid format. Please enter edge in the format 'node1_id,node2_id'.")
 
 def get_color_limits(k):
+    """Get the maximum number of nodes that can be assigned to each color."""
     limits = []
     for i in range(k):
         while True:
@@ -85,63 +74,17 @@ def graph_coloring(G, color_assignment, color_count, color_limits, colors, node_
 
     return False
 
-def get_color_names(k):
-    while True:
-        color_names = input(f"Enter {k} colors separated by spaces (e.g., 'red blue green ...'): ").split()
-        if len(color_names) != k:
-            print(f"Please enter exactly {k} colors.")
-            continue
-        try:
-            # Validate color names by converting them to RGB values using Matplotlib
-            colors = [matplotlib.colors.to_rgb(name) for name in color_names]
-            return colors
-        except ValueError as e:
-            print(f"Invalid color name: {e}. Please try again.")
-
-
-def is_multigraph(G):
-    """Check if the graph is a multigraph."""
-    return isinstance(G, nx.MultiGraph)
-
-def remove_loops(G):
-    """Remove self-loops from the graph."""
-    loops = list(nx.selfloop_edges(G))
-    G.remove_edges_from(loops)
-    if loops:
-        print(f"Removed {len(loops)} self-loop(s).")
-    return G
-
-def remove_multiple_edges(G):
-    """Convert multigraph to simple graph by removing multiple edges."""
-    if is_multigraph(G):
-        simple_G = nx.Graph()
-        for u, v, data in G.edges(data=True):
-            if simple_G.has_edge(u, v):
-                continue  # Skip additional edges
-            simple_G.add_edge(u, v, **data)
-        return simple_G
-    return G
-
-def convert_to_simple_graph(G):
-    """Convert any graph to a simple graph."""
-    G = remove_loops(G)
-    G = remove_multiple_edges(G)
-    return G
-
 # Create a Graph
 G = nx.Graph()
-G = convert_to_simple_graph(G)
 
 # Get the number of nodes and edges from the user
 num_nodes = get_integer("How many nodes? ")
 num_edges = get_integer("How many edges? ")
 
-# Input nodes
-existing_nodes = set()
-for _ in range(num_nodes):
-    node_id, label = get_node_input(existing_nodes)
+# Automatically generate nodes with IDs and labels like A, B, C, ...
+for node_id in range(num_nodes):
+    label = chr(65 + node_id)  # Convert node_id to corresponding ASCII uppercase letter
     G.add_node(node_id, label=label)
-    existing_nodes.add(node_id)
 
 # Input edges
 nodes = set(G.nodes())
@@ -155,15 +98,13 @@ for _ in range(num_edges):
 k = get_integer("Enter the number of colors: ")
 color_limits = get_color_limits(k)
 
-
-# Get color names from the user
-colors = get_color_names(k)  # This replaces the previous automatic color map
 # Map colors to a palette
 color_map = matplotlib.colormaps.get_cmap('tab10')  # Get the colormap
+max_colors = color_map.N  # Number of colors in the colormap
 
 # Handle the color generation without division by zero
 if k > 1:
-    colors = [color_map(i / (k - 1)) for i in range(k)]  # Generate a list of k colors
+    colors = [color_map(i / max(max_colors - 1, 1)) for i in range(k)]  # Generate a list of k colors
 else:
     colors = [color_map(0)]  # Only one color
 
@@ -202,6 +143,40 @@ labels = nx.get_node_attributes(G, 'label')
 nx.draw_networkx_labels(G, pos, labels, font_size=16)
 
 # Save the plot to a file
-plt.title("Graph with User Input")
+plt.title("Graph Coloring")
 plt.savefig('graph_plot.png')  # Save as PNG file
 plt.close()  # Close the plot to free up resources
+
+
+# def is_multigraph(G):
+#     """Check if the graph is a multigraph."""
+#     return isinstance(G, nx.MultiGraph)
+
+# def remove_loops(G):
+#     """Remove self-loops from the graph."""
+#     loops = list(nx.selfloop_edges(G))
+#     G.remove_edges_from(loops)
+#     if loops:
+#         print(f"Removed {len(loops)} self-loop(s).")
+#     return G
+
+# def remove_multiple_edges(G):
+#     """Convert multigraph to simple graph by removing multiple edges."""
+#     if is_multigraph(G):
+#         simple_G = nx.Graph()
+#         for u, v, data in G.edges(data=True):
+#             if simple_G.has_edge(u, v):
+#                 continue  # Skip additional edges
+#             simple_G.add_edge(u, v, **data)
+#         return simple_G
+#     return G
+
+# def convert_to_simple_graph(G):
+#     """Convert any graph to a simple graph."""
+#     G = remove_loops(G)
+#     G = remove_multiple_edges(G)
+#     return G
+
+# Create a Graph
+#G = nx.Graph()
+# G = convert_to_simple_graph(G)

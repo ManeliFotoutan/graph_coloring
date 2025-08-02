@@ -15,7 +15,7 @@ This project implements a graph coloring algorithm with constraints on the numbe
 - The algorithm uses **depth-first search with backtracking** to find a valid coloring under these constraints.
 - The resulting graph is saved as an image file named `graph_plot.png`.
   
-For a detailed description of the algorithm, design decisions, and analysis, please refer to the problem_coloring graph.pdf file.
+For a detailed description of the algorithm, design decisions, and analysis, please refer to the [problem_coloring graph.pdf](./problem_coloring%20graph.pdf) file included in this repository.
 ##  Output
 
 The output graph is saved as a PNG image with:

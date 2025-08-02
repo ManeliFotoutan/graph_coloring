@@ -14,9 +14,8 @@ This project implements a graph coloring algorithm with constraints on the numbe
   - The maximum number of nodes allowed per color.
 - The algorithm uses **depth-first search with backtracking** to find a valid coloring under these constraints.
 - The resulting graph is saved as an image file named `graph_plot.png`.
-
->  For detailed description of the algorithm, design decisions, and analysis, refer to the [problem_coloring graph.pdf](./problem_coloring graph.pdf) file.
-
+  
+For a detailed description of the algorithm, design decisions, and analysis, please refer to the problem_coloring graph.pdf file.
 ##  Output
 
 The output graph is saved as a PNG image with:

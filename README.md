@@ -4,7 +4,7 @@ This project implements a graph coloring algorithm with constraints on the numbe
 - No two adjacent nodes share the same color.
 - The number of nodes assigned to each color does not exceed a specified limit.
   
-- ##  Description
+ ##  Description
 
 - The program prompts the user to enter the number of nodes and edges.
 - Nodes are automatically labeled using capital letters (A, B, C, ...).
@@ -16,6 +16,7 @@ This project implements a graph coloring algorithm with constraints on the numbe
 - The resulting graph is saved as an image file named `graph_plot.png`.
   
 For a detailed description of the algorithm, design decisions, and analysis, please refer to the [problem_coloring graph.pdf](./problem_coloring%20graph.pdf) file included in this repository.
+
 ##  Output
 
 The output graph is saved as a PNG image with:
@@ -32,12 +33,11 @@ The output graph is saved as a PNG image with:
 Follow the prompts in the terminal to input graph structure and coloring constraints.
 
 ## Dependencies
-networkx
-
-matplotlib
 
 You can install them manually if no requirements.txt is provided:
+```bash
 pip install networkx matplotlib
+```
 
 ## Notes
 Self-loops are ignored.
